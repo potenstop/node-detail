@@ -1,0 +1,24 @@
+{
+  "name": "node-detail",
+  "version": "1.0.0",
+  "description": "node中文帮助文档",
+  "engines": {
+    "node": ">= 14.0.0"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.14",
+    "@types/mocha": "^8.0.4",
+    "typescript": "^4.3.5",
+    "chai": "^4.2.0",
+    "mocha": "^8.2.1"
+  },
+  "scripts": {
+    "test": "ts-node src/index.ts",
+    "build": "rimraf ./lib && tsc"
+  },
+  "author": "potenstop@163.com",
+  "license": "ISC",
+  "dependencies": {
+    "reflect-metadata": "0.1.13"
+  }
+}
