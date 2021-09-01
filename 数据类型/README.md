@@ -32,7 +32,7 @@ const nan = Number("ad");   // NaN
 const fin = 1/0;    // Infinity
 ```
 javascript所有的数字都是64位(1位符号+11 位指数+52位尾数)，(-1)^s*1.f*2^(e-1023)
-```javascript
+```text
 0.7 *2 = 1.4 *2 = 0.8 *2 =1.6 * 2 = 1.2 *2 =0.4
 0.10110
 

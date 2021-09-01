@@ -6,9 +6,7 @@ describe("测试", () => {
         const number3 = 0b1;    // 通过二进制形式创建
         const nan = Number("ad");   // NaN
         const fin = 1/0;    // Infinity
-
         console.log(numberWrap, number2)
-
     })
 
 })
