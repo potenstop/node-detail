@@ -19,6 +19,8 @@
   "author": "potenstop@163.com",
   "license": "ISC",
   "dependencies": {
+    "acorn": "^8.4.1",
+    "cjs-module-lexer": "^1.2.2",
     "reflect-metadata": "0.1.13"
   }
 }
