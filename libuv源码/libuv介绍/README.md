@@ -14,6 +14,83 @@ libuv 是一个跨平台支持库，原先为 NodeJS 而写。它围绕着事件
 - 对于不可以用系统调用的IO操作(如文件操作)，使用Thread pool的模拟出异步API。
 - 最后将统一的API和Thread pool模拟的API统一封装对外部提供
 # kqueue的事件循环
+因为电脑是macbook，所以以kqueue来介绍。
+> [参考地址](https://www.cnblogs.com/cool-fire/p/14690040.html)
+```cpp
+#include <sys/event.h>
+#include <err.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main() {
+     struct    kevent event;     /* Event we want to monitor */
+     struct    kevent tevent;     /* Event triggered */
+     int kq, fd, ret;
+
+
+     // 打开文件，拿到文件描述符
+     fd = open("1.txt", O_RDONLY);
+     if (fd    == -1)
+         err(EXIT_FAILURE, "Failed to open");
+
+     /* Create kqueue. */
+     // 创建kqueue队列，返回描述符
+     kq = kqueue();
+     if (kq    == -1)
+         err(EXIT_FAILURE, "kqueue() failed");
+  
+  // EV_SET(kev, ident,    filter,    flags, fflags, data, udata);
+  /*
+     初始化kevent结构体
+     ident：为文件描述符
+     EVFILE_VNODE： 用这个filter
+     EV_ADD：添加到kqueue
+     EV_CLEAR：每次事件被取走，状态重置
+     NOTE_WRITE：每当ident指向的文件描述符有写入时返回
+     不用太纠结为什么要用EVFILE_VNODE这个filter，按照官网来说，这个filter就是要用监听文件变化的。
+   */
+     EV_SET(&event,    fd, EVFILT_VNODE, EV_ADD | EV_CLEAR, NOTE_WRITE, 0,    NULL);
+     /*
+        int kevent(
+            int    kq, 
+            const struct kevent    *changelist, 
+            int nchanges,
+            struct    kevent *eventlist, 
+            int nevents,
+            const struct timespec *timeout
+        );
+        参数changlist、eventlist都是指向kevent结构的指针，changelist是要监听的事件，如果事件发生，会放在eventlist里。
+        函数返回放在eventlist里事件的数量，即放了多少个事件到eventlist。
+        其中有个比较重要的设定，如果nevents值是0，那kevent()会立即返回；如果nevents不为0，且timeout指针为空，那么kevent()会永久阻塞，直到事件发生。
+     */
+     ret = kevent(kq, &event, 1, NULL, 0, NULL);
+
+     if (ret == -1) // 注册失败会返回-1
+         err(EXIT_FAILURE, "kevent register");
+
+     if (event.flags & EV_ERROR) // 有其他错误，会置flags的EV_RROR位为1，错误数据放在data字段
+         errx(EXIT_FAILURE,    "Event error: %s", strerror(event.data));
+
+     // 开启循环
+     for (;;) {
+         /*    Sleep until something happens. */
+         // 这里nevents不为0，eventlist为这NULL，且timeout为空指针，那会永久阻塞，直到有事件产生
+         ret = kevent(kq, NULL, 0, &tevent,    1, NULL);
+
+         if (ret ==    -1) {
+            err(EXIT_FAILURE, "kevent wait");
+
+         } else if (ret > 0) {
+
+            // 每当有东西写到文件里了，就会触发事件
+            printf("Something was written in \n");
+         }
+     }
+}
+
+```
 
 
 # 事件循环
@@ -29,14 +106,15 @@ int uv_run(uv_loop_t* loop, uv_run_mode mode) {
   int timeout;
   int r;
   int ran_pending;
-  // 
+  // 判断loop是否为活动的  r==0则为不活动的
   r = uv__loop_alive(loop);
   if (!r)
+    // 不活动情况下 更新time
     uv__update_time(loop);
-
   while (r != 0 && loop->stop_flag == 0) {
-
+    // 更新time
     uv__update_time(loop);
+    // 
     uv__run_timers(loop);
     ran_pending = uv__run_pending(loop);
     uv__run_idle(loop);
