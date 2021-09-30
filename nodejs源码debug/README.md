@@ -63,7 +63,7 @@ c/c++(c/c++的支持、语法提示、调试等功能)和CodeLLDB(调试、断�
 选择默认配置
 ![调试](./调试3.png)
 此时在.vscode中生成了launch.json文件，修改了program
-```json
+```json5
 {
     // 使用 IntelliSense 了解相关属性。 
     // 悬停以查看现有属性的描述。

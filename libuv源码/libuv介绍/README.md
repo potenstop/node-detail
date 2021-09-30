@@ -114,10 +114,13 @@ int uv_run(uv_loop_t* loop, uv_run_mode mode) {
   while (r != 0 && loop->stop_flag == 0) {
     // 更新time
     uv__update_time(loop);
-    // 
+    // 执行timer队列
     uv__run_timers(loop);
+    // 执行pending队列
     ran_pending = uv__run_pending(loop);
+    // 执行idle队列
     uv__run_idle(loop);
+    // 执行prepare队列
     uv__run_prepare(loop);
 
     timeout = 0;
