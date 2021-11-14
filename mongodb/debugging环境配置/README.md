@@ -1,39 +1,24 @@
 #mac 环境说明
-- 系统: mac 10.15.7 
-- vscode: 1.59.1
-- python: 3.6.12
-- libuv: 1.42
-
+- 系统: debian 10.6
+- vscode: 1.61.1
+- python: 3.7.3
+- mongodb: 4.4
+- gcc: 8.3.0
+- pip: 20.x
+- 参考build地址: https://github.com/mongodb/mongo/blob/v4.4/docs/building.md
 # 安装依赖
-libtool 默认mac有自带  如果没有的话需要源码编译
-```shell script
-curl -O http://mirrors.kernel.org/gnu/libtool/libtool-2.4.6.tar.gz
-tar xzvf libtool-2.4.6.tar.gz
-cd libtool-2.4.6
-./configure --prefix=/usr/local
-make
-sudo make install
-```
-automake，如果brew install automake 不能安装的话可以源码编译安装
-```text
-curl -O http://mirrors.kernel.org/gnu/automake/automake-1.16.4.tar.gz
-tar xzvf automake-1.16.4.tar.gz
-cd automake-1.16.4
-./configure --prefix=/usr/local
-make
-sudo make install
+```shell
+sudo apt install  libcurl4-openssl-dev
+sudo apt install liblzma-dev
 ```
 
-# 下载libuv并编译
-```shell script
-git clone https://github.com/libuv/libuv.git
-sh autogen.sh 
-./configure
-make -j4
-sudo make install
+# 安装mongod
+```shell
+git clone https://github.com/mongodb/mongo 
+cd mongo
+python3 buildscripts/scons.py install-mongod
 ```
-make生成.libs目录，里面是编译好的静态库，核心是 libuv.a 文件。
-make install会把uh.h头文件复制到/usr/local/include/。libuv.a 复制到 /usr/local/lib
+
 
 # vscode 调试
 打开vscode加载libuv项目。

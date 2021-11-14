@@ -2,6 +2,7 @@
 libuv 是一个跨平台支持库，原先为 NodeJS 而写。它围绕着事件驱动的异步I/O模型而设计。
 这个库提供不仅仅是对不同I/O轮询机制的简单抽象，还包括：handles和stream对sockets和其他实体提供了高级别的抽象； 也提供了跨平台的文件I/O和线程功能，以及其他一些东西。
 ![libuv 官网的架构图](http://docs.libuv.org/en/v1.x/_images/architecture.png)
+
 - epoll: linux轮询机制。
 - kqueue: mac OS和其他BSD轮询机制。
 - event ports: SunOS轮询机制。

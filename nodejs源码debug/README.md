@@ -1,8 +1,8 @@
 #mac 环境说明
-- 系统: mac 10.15.7 
+- 系统: deepin 20 - Linux 5.10
 - vscode: 1.59.1
 - node：v16
-- python: 3.6.12
+- python: 3.7
 
 # 下载源码 编译 编译大概需要两个小时左右
 ```shell script
