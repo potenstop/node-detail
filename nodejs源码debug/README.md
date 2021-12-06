@@ -8,14 +8,18 @@
 ```shell script
 $ git clone https://github.com/nodejs/node.git
 $ cd node
+# 需要加--debug 否则断点会不生效
 $ ./configure --debug
 $ make -j4
+# 需要增加build cache 加速每次修改的编译 则/etc/profile增加下面两行
+#export CC="ccache gcc"
+#export CXX="ccache g++"
 ```
 
 # make过程中如果有libtool报错
 Try 'libtool --help' for more information.
 libtool:   error: unrecognised option: '-static' 
-> 解决方法: 删除自己编译安装的libtool,使用mac自带的libtool, 才有-static参数。
+> 解决方法: 删除自己编译安装的libtool,如果使用mac自带的libtool, 才有-static参数。
 
 
 # 编译完成
@@ -65,25 +69,36 @@ c/c++(c/c++的支持、语法提示、调试等功能)和CodeLLDB(调试、断�
 此时在.vscode中生成了launch.json文件，修改了program
 ```json5
 {
-    // 使用 IntelliSense 了解相关属性。 
-    // 悬停以查看现有属性的描述。
-    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "(gdb) 启动",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/out/Debug/node",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${fileDirname}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
         {
-            "name": "(lldb) 启动",
-            "type": "cppdbg",
-            "request": "launch",
-            // 这里替换为编译生成的node路径
-            "program": "${workspaceFolder}/out/Debug/node",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${fileDirname}",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "lldb"
+          "description": "为 gdb 启用整齐打印",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        },
+        {
+          "description": "将反汇编风格设置为 Intel",
+          "text": "-gdb-set disassembly-flavor intel",
+          "ignoreFailures": true
         }
-    ]
+      ]
+    }
+  ]
 }
 ```
 切换到调式窗口 增加断点 就可以调式了
